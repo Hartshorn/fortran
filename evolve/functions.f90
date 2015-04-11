@@ -312,7 +312,7 @@ subroutine draw_world(a, p)
                     if ((.not. p(c)%dead) .and. (p(c)%x == x .and. p(c)%y == y)) then
                         write(*, '(a)', advance="no") '*'
                         is_p = .true.
-                        exit
+                        continue
                     end if
                 end do
             end if

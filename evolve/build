@@ -1,0 +1,3 @@
+#!/bin/bash
+
+gfortran types.f90 functions.f90 evolve.f90 -o evolve

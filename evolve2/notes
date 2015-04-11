@@ -1,0 +1,19 @@
+    
+    array(50,15) = 6
+    array(10,2) = 1
+    
+    do i = 1, 30
+        write(*,'(a)', advance="no") '|'
+        
+        do j = 1, 100
+            
+            if (array(j,i) == 1) then
+                write(*, '(a)', advance="no") '*'
+            else if (array(j,i) == 6) then
+                write(*, '(a)', advance="no") 'M'
+            else    
+                write(*,'(a)', advance="no") ' '
+            end if
+        end do
+        write(*,*) '|'
+    end do
