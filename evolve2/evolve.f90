@@ -5,9 +5,8 @@ program evolve
 
     implicit none
     
-    integer :: width = 100, height = 30, is, js, days, c
+    integer :: width = 100, height = 30, days, c
     type(organism) :: world(0:100, 0:30)
-    logical :: rep
     
     call init_random_seed()
     

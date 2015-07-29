@@ -42,7 +42,10 @@ end subroutine generate_genes
 subroutine move_animal(ar, a, w, h)
 
     type(organism) :: ar(:,:), a
-    integer :: x, y, w, h, new_x, new_y, hold_x, hold_y
+    
+!   What are the x and y here used for?  Do they need to be here?
+
+    integer :: x = 0, y = 0, w, h, new_x, new_y, hold_x, hold_y
     
     if (a%dir >= 2 .and. a%dir < 5) then
         new_x = 1
@@ -139,7 +142,7 @@ end subroutine make_another
 
 function mutate_genes(g)
 
-    integer :: g(8), mutate_genes(8), index
+    integer :: g(8), mutate_genes(8)
     real :: n, o
     
     call random_number(n)
