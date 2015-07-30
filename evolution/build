@@ -1,3 +1,3 @@
 #!/bin/bash
 
-gfortran evolution.f90 -O0 -Wall -o evolution
+gfortran types.f90 functions.f90 evolution.f90 -O0 -Wall -o evolution
