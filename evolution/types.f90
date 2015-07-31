@@ -14,14 +14,14 @@ module types
 
     contains
 
-        procedure :: show   => describe_animal
-        procedure :: copy_an   => get_new_animal
-        procedure :: cpy_gn => copy_and_alter_genes
-        procedure :: eat    => eat_animal
-        procedure :: can_reproduce => able_bodied
-        procedure :: turn   => turn_animal
-        procedure :: move   => move_animal
-        procedure :: init   => initialize_first_animal
+        procedure :: show           => describe_animal
+        procedure :: copy_an        => get_new_animal
+        procedure :: cpy_gn         => copy_and_alter_genes
+        procedure :: eat            => eat_animal
+        procedure :: can_reproduce  => able_bodied
+        procedure :: turn           => turn_animal
+        procedure :: move           => move_animal
+        procedure :: init           => initialize_first_animal
 
     end type Animal
 
@@ -42,8 +42,8 @@ contains
 
     subroutine initialize_first_animal(this)
         
-        class(Animal) :: this
-        integer :: i
+        class(Animal)   :: this
+        integer         :: i
         
         this%alive = .true.
         this%x     = WIDTH / 2
@@ -148,7 +148,7 @@ contains
     pure function able_bodied(this) result(is_able_bodied)
     
         class(Animal), intent(in) :: this
-        logical :: is_able_bodied
+        logical                   :: is_able_bodied
         
         is_able_bodied = this%energy > REPR_NRG
         
@@ -157,39 +157,37 @@ contains
     
     subroutine turn_animal(this)
         
-        class(Animal) :: this
-        !integer :: index
+        class(Animal)   :: this
+        integer        :: index
         
-        this%direction = mod(this%direction + 1, 8)
+        !this%direction = mod(this%direction + 1, 8)
         this%energy = this%energy - 1
         
-        !index = index_of_max(this%genes)
+        index = index_of_max(this%genes)
         
-        !this%direction = mod(this%direction + index, 8)
+        this%direction = mod(this%direction + index, 8)
         
     end subroutine turn_animal
     
     
     subroutine move_animal(this)
     
-        class(Animal) :: this
-        integer      :: x_factor, y_factor
+        class(Animal)   :: this
+        integer         :: x_factor, y_factor
         
-        if (this%direction >= 2 .and. this%direction < 5) then
-            x_factor = 1
-        else if (this%direction == 1 .or. this%direction == 5) then
-            x_factor = 0
-        else
-            x_factor = -1
-        end if
+        x_factor = merge(1, merge(0,                            &
+                                 -1,                            &
+                                 this%direction == 1            &
+                            .or. this%direction == 5),          &
+                         this%direction >= 2                    &
+                   .and. this%direction < 5)
         
-        if (this%direction >= 0 .and. this%direction < 3) then
-            y_factor = -1
-        else if (this%direction >= 4 .or. this%direction < 7) then
-            y_factor = 1
-        else
-            y_factor = 0
-        end if
+        y_factor = merge(-1, merge(1,                            &
+                                   0,                            &
+                                  this%direction == 1            &
+                             .or. this%direction == 5),          &
+                          this%direction >= 2                    &
+                    .and. this%direction < 5)
         
         this%x = mod(this%x + x_factor, WIDTH)
         this%y = mod(this%y + y_factor, HEIGHT)
@@ -199,9 +197,9 @@ contains
     
     function random_for_types(r) result(n)
     
-        integer :: n
+        integer             :: n
         integer, intent(in) :: r
-        real :: rnd
+        real                :: rnd
         
         call random_number(rnd)
         
@@ -213,7 +211,7 @@ contains
     function index_of_max(arr) result(r)
     
         integer, dimension(0:8) :: arr
-        integer :: i, r
+        integer                 :: i, r
         
         do i = 0, 8
             if (arr(i) > r) then
@@ -222,6 +220,5 @@ contains
         end do
     
     end function index_of_max
-        
 
 end module types
