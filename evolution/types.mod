@@ -1,5 +1,5 @@
 GFORTRAN module version '10' created from types.f90
-MD5:ce398a4014fa28b194ea68bd52f86acd -- If you edit this, you'll get what you deserve.
+MD5:0635dc83362685d2908c263325e32729 -- If you edit this, you'll get what you deserve.
 
 (() () () () () () () () () () () () () () () () () () () () () () ()
 () () () ())
@@ -135,7 +135,7 @@ INTEGER 4 0 0 0 INTEGER ()) 57 0 (58) (1 0 EXPLICIT (CONSTANT (INTEGER 4
 13 'eat_animal' 'types' '' 1 ((PROCEDURE UNKNOWN-INTENT MODULE-PROC DECL
 UNKNOWN 0 0 SUBROUTINE) (UNKNOWN 0 0 0 0 UNKNOWN ()) 60 0 (61 62) () 0 ()
 () () 0 0)
-14 'initialize_first_animal' 'types' '' 1 ((PROCEDURE UNKNOWN-INTENT
+14 'initialize_animal' 'types' '' 1 ((PROCEDURE UNKNOWN-INTENT
 MODULE-PROC DECL UNKNOWN 0 0 SUBROUTINE) (UNKNOWN 0 0 0 0 UNKNOWN ()) 63
 0 (64) () 0 () () () 0 0)
 15 'move_animal' 'types' '' 1 ((PROCEDURE UNKNOWN-INTENT MODULE-PROC

@@ -21,7 +21,7 @@ module types
         procedure :: can_reproduce  => able_bodied
         procedure :: turn           => turn_animal
         procedure :: move           => move_animal
-        procedure :: init           => initialize_first_animal
+        procedure :: init           => initialize_animal
 
     end type Animal
 
@@ -40,7 +40,7 @@ module types
 
 contains
 
-    subroutine initialize_first_animal(this)
+    subroutine initialize_animal(this)
         
         class(Animal)   :: this
         integer         :: i
@@ -52,7 +52,7 @@ contains
             this%genes(i) = random_for_types(10)
         end do
         
-    end subroutine initialize_first_animal
+    end subroutine initialize_animal
     
 
     subroutine describe_animal(this)
@@ -175,11 +175,11 @@ contains
         class(Animal)   :: this
         integer         :: x_factor, y_factor
         
-        x_factor = merge(1, merge(0,                            &
-                                 -1,                            &
-                                 this%direction == 1            &
-                            .or. this%direction == 5),          &
-                         this%direction >= 2                    &
+        x_factor = merge(1, merge(0,                             &
+                                 -1,                             &
+                                 this%direction == 1             &
+                            .or. this%direction == 5),           &
+                         this%direction >= 2                     &
                    .and. this%direction < 5)
         
         y_factor = merge(-1, merge(1,                            &
