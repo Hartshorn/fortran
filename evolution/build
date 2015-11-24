@@ -1,3 +1,62 @@
 #!/bin/bash
 
-gfortran constants.f90 types.f90 functions.f90 evolution.f90 -O0 -Wall -o evolution
+###########################################################
+#                                                         #
+#   This is a buildscript for fortran - evolve            #
+#   Change the value of $FILE* and $COMPILER as needed    #
+#                                                         #
+#     usage: ./build or ./build clean                     #
+#                                                         #
+###########################################################
+
+# gfortran constants.f90 types.f90 functions.f90 evolution.f90 -O0 -Wall -o evolution
+
+echo " "
+echo "---------------------START: Fortran Evolve---------------"
+echo " "
+
+FILE1='evolution'
+FILE2='constants'
+FILE3='types'
+FILE4='functions'
+COMPILER='gfortran'
+FLAGS_BUILD=' -Wall -O0'
+FLAGS_COMPILE=' -c -Wall -O0'
+OUT_FILE='-o evolution'
+
+echo "  Files:      $FILE1, $FILE2, $FILE3, $FILE4"
+echo "  Compiler:   $COMPILER"
+echo "  Outfile :   $OUT_FILE"
+
+        if [ "$1" == "clean" ]; then
+                echo "  Cleaning: "
+                rm -f *.mod *.o *.exe
+
+                if [ "$2" == "only" ]; then
+                    echo "      Only performing clean"
+                    echo " "
+                    echo "-------------------------Clean complete------------------"
+                    echo " "
+                    echo " "
+                    exit 0;
+                else
+                    echo "      Clean complete"
+                fi
+        fi
+
+echo "  Compiling:"
+
+        $COMPILER $FLAGS_COMPILE $FILE2\.f90 $FILE3\.f90 $FILE4\.f90
+
+echo "      Compilation complete"
+echo "  Building:"
+echo "      Build complete"
+
+        $COMPILER $FLAGS_BUILD $FILE1\.f90 $FILE2\.o $FILE3\.o $FILE4\.o $OUT_FILE
+
+echo " "
+echo "----------------------------FINISH-----------------------"
+echo " "
+echo " "
+
+exit 0

@@ -1,0 +1,71 @@
+#!/bin/bash
+
+###########################################################
+#                                                         #
+#   This is a buildscript for fortran - complex           #
+#   Change the value of $FILE* and $COMPILER as needed    #
+#                                                         #
+#     usage: ./build or ./build clean                     #
+#     run:   ./build run or ./build clean run             #
+#                                                         #
+###########################################################
+
+echo " "
+echo "---------------------START: Fortran Complex---------------"
+echo " "
+
+FILE1='complex'
+FILE2='types'
+FILE3='constants'
+FILE4='functions'
+COMPILER='gfortran'
+FLAGS_BUILD=' -Wall -O0 -fbackslash'
+FLAGS_COMPILE=' -c -Wall -O0'
+OUT_FILE='-o complex'
+
+echo "  Files:      $FILE1, $FILE2, $FILE3. $FILE4"
+echo "  Compiler:   $COMPILER"
+echo "  Outfile :   $OUT_FILE"
+
+    if [ "$1" == "clean" ]; then
+        echo "  Cleaning: "
+        rm -f *.mod *.o *.exe
+
+        if [ "$2" == "only" ]; then
+            echo "      Only performing clean"
+            echo " "
+            echo "-------------------------Clean complete------------------"
+            echo " "
+            echo " "
+            exit 0;
+        else
+            echo "      Clean complete"
+        fi
+    fi
+
+echo "  Compiling:"
+
+        $COMPILER $FLAGS_COMPILE    $FILE2\.f08 \
+                                    $FILE3\.f08 \
+                                    $FILE4\.f08
+
+echo "      Compilation complete"
+echo "  Building:"
+echo "      Build complete"
+
+        $COMPILER $FLAGS_BUILD  $FILE1\.f08     \
+                                $FILE2\.o       \
+                                $FILE3\.o       \
+                                $FILE4\.o       \
+                    $OUT_FILE
+
+echo " "
+echo "----------------------------FINISH-----------------------"
+echo " "
+echo " "
+
+    if [ "$1" == "run" ] || [ "$2" == "run" ]; then
+        ./complex.exe $(tput cols) $(tput lines)
+    fi
+
+exit 0
