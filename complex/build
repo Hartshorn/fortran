@@ -5,31 +5,65 @@
 #   This is a buildscript for fortran - complex           #
 #   Change the value of $FILE* and $COMPILER as needed    #
 #                                                         #
-#     usage: ./build or ./build clean                     #
-#     run:   ./build run or ./build clean run             #
+#     usage:        ./build or ./build clean              #
+#     run:      ./build run or ./build clean run          #
+#     test:    ./build test or ./build clean test         #
+#                                                         #
+#     both, no clean: ./build full                        #
 #                                                         #
 ###########################################################
 
 echo " "
 echo "---------------------START: Fortran Complex---------------"
-echo " "
 
 FILE1='complex'
 FILE2='types'
 FILE3='constants'
 FILE4='functions'
-COMPILER='gfortran'
-FLAGS_BUILD=' -Wall -O0 -fbackslash'
-FLAGS_COMPILE=' -c -Wall -O0'
-OUT_FILE='-o complex'
+FILE5='logger'
+TEST_FILE='tests'
 
-echo "  Files:      $FILE1, $FILE2, $FILE3. $FILE4"
+SRC='src/'
+BIN='bin/'
+TEST_SRC='test/src/'
+TEST_BIN='test/bin/'
+
+COMPILER='gfortran'
+
+OUT_FILE='-o complex'
+OUT_FILE_TEST='-o test_runner'
+
+FLAGS_BUILD=' -std=f2008 -pedantic -Wall -O0 -fbacktrace -fall-intrinsics -I bin/'
+FLAGS_BUILD_TEST=' -std=f2008 -pedantic -Wall -O0 -fbacktrace -fall-intrinsics -I test/bin/'
+FLAGS_COMPILE=' -c -Wall -O0 -std=f2008 -pedantic -fall-intrinsics'
+
+echo "  Files:      $FILE1, $FILE2, $FILE3, $FILE4, $FILE5"
+echo "  Test Files: $TEST_FILE"
 echo "  Compiler:   $COMPILER"
 echo "  Outfile :   $OUT_FILE"
+echo "  Test Out:   $OUT_FILE_TEST"
+
+echo " "
+echo " Check for needed directories: create as needed"
+
+if [ ! -d "$BIN" ]; then
+    mkdir $BIN
+    echo "  $BIN created"
+else
+    if [ ! -d "$TEST_BIN" ]; then
+        mkdir $TEST_BIN
+        echo "  $TEST_BIN created"
+    fi
+fi
+echo " Directory Check Complete"
+echo " "
+
 
     if [ "$1" == "clean" ]; then
+        echo " "
         echo "  Cleaning: "
-        rm -f *.mod *.o *.exe
+        rm -f $BIN*.mod $BIN*.o $BIN*.exe               \
+              $TEST_BIN*.mod $TEST_BIN*.o $TEST_BIN*.exe
 
         if [ "$2" == "only" ]; then
             echo "      Only performing clean"
@@ -40,32 +74,76 @@ echo "  Outfile :   $OUT_FILE"
             exit 0;
         else
             echo "      Clean complete"
+            echo " "
         fi
     fi
 
 echo "  Compiling:"
 
-        $COMPILER $FLAGS_COMPILE    $FILE2\.f08 \
-                                    $FILE3\.f08 \
-                                    $FILE4\.f08
+        $COMPILER $FLAGS_COMPILE    $SRC$FILE2\.f08             \
+                                    $SRC$FILE3\.f08             \
+                                    $SRC$FILE4\.f08             \
+                                    $SRC$FILE5\.f08             \
 
 echo "      Compilation complete"
-echo "  Building:"
-echo "      Build complete"
-
-        $COMPILER $FLAGS_BUILD  $FILE1\.f08     \
-                                $FILE2\.o       \
-                                $FILE3\.o       \
-                                $FILE4\.o       \
-                    $OUT_FILE
-
 echo " "
+echo "  Move compiled objects to bin/"
+echo " "
+mv *.o bin/
+
+echo "  Building:"
+
+        $COMPILER $FLAGS_BUILD      $OUT_FILE                   \
+                                    $SRC$FILE1\.f08             \
+                                    $BIN$FILE2\.o               \
+                                    $BIN$FILE3\.o               \
+                                    $BIN$FILE4\.o               \
+                                    $BIN$FILE5\.o               \
+
+echo "      Build complete"
+echo " "
+echo "  Compiling Tests:"
+        $COMPILER $FLAGS_COMPILE    $SRC$FILE2\.f08             \
+                                    $SRC$FILE3\.f08             \
+                                    $SRC$FILE5\.f08             \
+                                    $TEST_SRC$TEST_FILE\.f08
+
+echo "      Compilation complete"
+echo " "
+echo "  Move compiled objects to test/bin"
+echo " "
+mv *.o *.mod test/bin
+
+echo "  Building Tests:"
+
+        $COMPILER $FLAGS_BUILD_TEST $TEST_SRC$TEST_FILE\.f08     \
+                                    $BIN$FILE2\.o                \
+                                    $BIN$FILE3\.o                \
+                                    $BIN$FILE4\.o                \
+                                    $BIN$FILE5\.o                \
+                                    $OUT_FILE_TEST
+echo "      Building Tests complete"
+echo " "
+
+echo " Cleanup"
+rm *.mod
 echo "----------------------------FINISH-----------------------"
 echo " "
+
+tree
+
 echo " "
 
-    if [ "$1" == "run" ] || [ "$2" == "run" ]; then
-        ./complex.exe $(tput cols) $(tput lines)
+if [ "$1" == "full" ]; then
+    ./complex.exe $(tput cols) $(tput lines) && ./test_runner
+else
+    if [ "$1" == "test" ] || [ "$2" == "test" ]; then
+        ./test_runner
+    else
+        if [ "$1" == "run" ] || [ "$2" == "run" ] || [ "$3" == "run" ]; then
+            ./complex.exe $(tput cols) $(tput lines)
+        fi
     fi
+fi
 
 exit 0
