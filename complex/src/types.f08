@@ -3,6 +3,9 @@ module types
     implicit none
     private
 
+    integer, parameter, public :: EXPLORER_INIT_ENERGY = 1000
+    integer, parameter, public :: PLANT_CONSUMPTION_ENERGY = 10
+
     type, private :: Position
 
         integer :: x, y
@@ -10,8 +13,8 @@ module types
     contains
 
         procedure :: get_x
-        procedure :: set_x
         procedure :: get_y
+        procedure :: set_x
         procedure :: set_y
 
     end type Position
@@ -31,8 +34,23 @@ module types
         procedure :: set_active
         procedure :: init       => create_with_position
         procedure :: move       => move_by_xy_factor
+        procedure :: index      => calculate_world_index
 
     end type Agent
+
+    type, public, extends(agent):: Explorer
+
+        integer :: energy = EXPLORER_INIT_ENERGY
+
+    contains
+
+        procedure :: forage => search_for_food
+        procedure :: get_energy
+        procedure :: set_energy
+        procedure :: show => debug_show_agent
+
+    end type Explorer
+
 
 contains
 
@@ -115,5 +133,43 @@ contains
         call this%set_x(this%get_x() + x)
         call this%set_y(this%get_y() + y)
     end subroutine move_by_xy_factor
+
+    pure integer function calculate_world_index(this, g_width) result(idx)
+        Class(Agent), intent(in) :: this
+        integer, intent(in) :: g_width
+
+        idx = this%get_y() * g_width + this%get_x()
+    end function calculate_world_index
+
+    subroutine search_for_food(this, g_width, plants)
+        Class(Explorer), intent(inout)  :: this
+        integer, intent(in)             :: g_width
+        logical, dimension(:)           :: plants
+
+        if(plants(this%index(g_width))) then
+            this%energy = this%energy + PLANT_CONSUMPTION_ENERGY
+            plants(this%index(g_width)) = .false.
+        end if
+    end subroutine search_for_food
+
+    pure integer function get_energy(this) result(nrg)
+        Class(Explorer), intent(in) :: this
+        nrg = this%energy
+    end function get_energy
+
+    subroutine set_energy(this, nrg)
+        Class(Explorer), intent(inout) :: this
+        integer, intent(in) :: nrg
+        this%energy = nrg
+    end subroutine set_energy
+
+    subroutine debug_show_agent(this)
+        Class(Explorer), intent(in) :: this
+        write(*,100) "x:",      this%get_x(),       &
+                     "y:",      this%get_y(),       &
+                     "energy:", this%get_energy(),  &
+                     "active:", this%get_active()
+        100 FORMAT(T12,a3,i2,a3,i2,a8,i5,a8,l2)
+    end subroutine debug_show_agent
 
 end module types

@@ -7,6 +7,7 @@ module tests
     implicit none
 
     integer :: INIT_X = 1, INIT_Y = 2, CHG_X = 3, CHG_Y = 4
+    integer :: INIT_ENERGY = 1000, CHG_ENERGY = 1010
 
 
 contains
@@ -30,17 +31,17 @@ contains
     end function assert_eq
 
     subroutine test_agent_init(a)
-        type(Agent) :: a
+        type(Explorer) :: a
 
         call log(INFO, "Test Case Begin: test_agent_init")
         call log(INFO, "    Before Initialization:")
 
         if(.not. a%get_active()) then
             call log(WARNING, "Passed")
-            write(*,*) "            a%get_active(): ", a%get_active()
+            call a%show()
         else
             call log(ERROR, "FAILED!!")
-            write(*,*) "            a%get_active(): ", a%get_active()
+            call a%show()
         end if
 
         call a%init(INIT_X, INIT_Y)
@@ -49,46 +50,42 @@ contains
 
         if(a%get_active()) then
             call log(WARNING, "Passed")
-            write(*,*) "            a%get_active(): ", a%get_active()
+            call a%show()
         else
             call log(ERROR, "FAILED!!")
-            write(*,*) "            a%get_active(): ", a%get_active()
+            call a%show()
         end if
 
         if(assert_eq(a%get_x(), INIT_X)) then
             call log(WARNING, "Passed")
-            write(*,*) "            a%get_x(): ", a%get_x()
+            call a%show()
         else
             call log(ERROR, "FAILED!!")
-            write(*,*) "            a%get_x(): ", a%get_x()
+            call a%show()
         end if
 
         if(assert_eq(a%get_y(), INIT_Y)) then
             call log(WARNING, "Passed")
-            write(*,*) "            a%get_y(): ", a%get_y()
+            call a%show()
         else
             call log(ERROR, "FAILED!!")
-            write(*,*) "            a%get_y(): ", a%get_y()
+            call a%show()
         end if
 
         call log(INFO, "Test Case End: test_agent_init")
     end subroutine test_agent_init
 
     subroutine test_agent_move(a)
-        type(Agent) :: a
+        type(Explorer) :: a
 
         call log(INFO, "Test Case Begin: test_agent_move")
 
         if(a%get_active()) then
             call log(WARNING, "Passed")
-            write(*,*) "            a%get_active(): ", a%get_active()
-            write(*,*) "            a%get_x(): ", a%get_x()
-            write(*,*) "            a%get_y(): ", a%get_y()
+            call a%show()
         else
             call log(ERROR, "FAILED!!")
-            write(*,*) "            a%get_active(): ", a%get_active()
-            write(*,*) "            a%get_x(): ", a%get_x()
-            write(*,*) "            a%get_y(): ", a%get_y()
+            call a%show()
         end if
 
         call log(INFO, "    After: Agent%move")
@@ -97,23 +94,54 @@ contains
 
         if(assert_eq(a%get_x(), INIT_X + CHG_X)) then
             call log(WARNING, "Passed")
-            write(*,*) "            a%get_x(): ", a%get_x()
+            call a%show()
         else
             call log(ERROR, "FAILED!!")
-            write(*,*) "            a%get_x(): ", a%get_x()
+            call a%show()
         end if
 
         if(assert_eq(a%get_y(), INIT_Y + CHG_Y)) then
             call log(WARNING, "Passed")
-            write(*,*) "            a%get_y(): ", a%get_y()
+            call a%show()
         else
             call log(ERROR, "FAILED!!")
-            write(*,*) "            a%get_y(): ", a%get_y()
+            call a%show()
         end if
 
         call log(INFO, "Test Case End: test_agent_move")
 
     end subroutine test_agent_move
+
+    subroutine test_agent_forage(a)
+        type(Explorer) :: a
+
+        call log(INFO, "Test Case Begin: test_agent_forage")
+
+        PLANTS(a%index(GLOBAL_WIDTH)) = .true.
+
+        call log(INFO, "    Before forage")
+        if(assert_eq(a%energy, INIT_ENERGY)) then
+            call log(WARNING, "Passed")
+            call a%show()
+        else
+            call log(ERROR, "FAILED!!")
+            call a%show()
+        end if
+
+        call a%forage(GLOBAL_WIDTH, PLANTS)
+
+        call log(INFO, "    After forage")
+        if(assert_eq(a%energy, CHG_ENERGY)) then
+            call log(WARNING, "Passed")
+            call a%show()
+        else
+            call log(ERROR, "FAILED!!")
+            call a%show()
+        end if
+
+        call log(INFO, "Test Case End: test_agent_forage")
+
+    end subroutine test_agent_forage
 
 end module tests
 
@@ -127,11 +155,14 @@ program test_runner
 
     implicit none
 
-    type(Agent) :: test_agent
+    type(Explorer) :: test_agent
+    call init_world()
+
     call log(HEADER, "        ....::::BEGIN TEST RUNNER::::....        ")
 
     call test_agent_init(test_agent)
     call test_agent_move(test_agent)
+    call test_agent_forage(test_agent)
 
     call log(HEADER, "        ....:::::END TEST RUNNER:::::....        ")
 end program test_runner

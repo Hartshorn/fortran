@@ -1,0 +1,8 @@
+PLANTS(10) = .true.
+10 = y * GLOBAL_WIDTH + x
+
+IDX = y * GW + x
+
+y = (IDX - x) / GW
+
+x = IDX / y * GW

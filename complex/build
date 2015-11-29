@@ -37,7 +37,7 @@ FLAGS_BUILD=' -std=f2008 -pedantic -Wall -O0 -fbacktrace -fall-intrinsics -I bin
 FLAGS_BUILD_TEST=' -std=f2008 -pedantic -Wall -O0 -fbacktrace -fall-intrinsics -I test/bin/'
 FLAGS_COMPILE=' -c -Wall -O0 -std=f2008 -pedantic -fall-intrinsics'
 
-echo "  Files:      $FILE1, $FILE2, $FILE3, $FILE4, $FILE5"
+echo "  Files:      $FILE1, $FILE2, $FILE3, $FILE4, $FILE5, $FILE6"
 echo "  Test Files: $TEST_FILE"
 echo "  Compiler:   $COMPILER"
 echo "  Outfile :   $OUT_FILE"
@@ -62,8 +62,9 @@ echo " "
     if [ "$1" == "clean" ]; then
         echo " "
         echo "  Cleaning: "
-        rm -f $BIN*.mod $BIN*.o $BIN*.exe               \
-              $TEST_BIN*.mod $TEST_BIN*.o $TEST_BIN*.exe
+        rm -f $BIN*.mod $BIN*.o $BIN*.exe                \
+              $TEST_BIN*.mod $TEST_BIN*.o $TEST_BIN*.exe \
+              *.exe complex test_runner
 
         if [ "$2" == "only" ]; then
             echo "      Only performing clean"
@@ -141,7 +142,7 @@ else
         ./test_runner
     else
         if [ "$1" == "run" ] || [ "$2" == "run" ] || [ "$3" == "run" ]; then
-            ./complex.exe $(tput cols) $(tput lines)
+            ./complex $(tput cols) $(tput lines)
         fi
     fi
 fi
